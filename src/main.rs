@@ -4,22 +4,28 @@ use std::io::stdin;
 use zip;
 
 fn main() {
-    while true {
-        tryStep();
+    loop {
+        let res = try_step();
+        println!("{res:?}");
     }
 }
 
-enum TryFileError {
-    Error,
-    Lol,
-}
+// #[derive(Debug)]
+// enum TryFileError {
+//     ErrorStdReadLine,
+//     ErrorOpenFile,
+// }
 
-fn tryStep() -> Result<(), TryFileError> {
+fn try_step() -> Result<(), Box<dyn Error>> {
     let mut input_path = String::new();
     println!("Paste Filepath to zip");
-    stdin().read_line(&mut input_path);
-    let filepath = std::path::Path::new(&*input_path);
-    let file = std::fs::File::open(filepath).unwrap();
+    let _ = stdin().read_line(&mut input_path)?;
+    let filepath = std::path::Path::new(&*input_path.trim());
+    let file_res = std::fs::File::open(filepath);
+    if file_res.is_err() {
+        println!("{filepath:?}")
+    }
+    let file = file_res?;
     let mut archive = zip::ZipArchive::new(file).unwrap();
     for i in 0..archive.len() {
         let mut file_object = archive.by_index(i).unwrap();
