@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 use std::{fs, io};
 use std::error::Error;
 use std::io::stdin;
@@ -5,53 +7,65 @@ use zip;
 
 fn main() {
     loop {
-        let res = try_step();
-        println!("{res:?}");
+        let mut input_path = String::new();
+        println!("Paste Filepath to zip");
+        let resReadLine = stdin().read_line(&mut input_path);
+        println!("{resReadLine:?}");
+        if resReadLine.is_err() {
+            continue;
+        }
+
+        let resReadZip = read_all_filepaths_from_zip(&input_path).unwrap();
+        //println!("{resReadZip:?}");
+        let files = resReadZip.iter().map(|x| { x.clone().zipInsidePath.clone() });
+        let x: Vec<String> = files.collect();
+        let y = x.join("\r\n");
+        println!("{}", y);
     }
 }
 
 // #[derive(Debug)]
 // enum TryFileError {
-//     ErrorStdReadLine,
-//     ErrorOpenFile,
+//     UnknownError(Box<str>)
+//     // ErrorStdReadLine,
+//     // ErrorOpenFile,
 // }
 
-fn try_step() -> Result<(), Box<dyn Error>> {
-    let mut input_path = String::new();
-    println!("Paste Filepath to zip");
-    let _ = stdin().read_line(&mut input_path)?;
-    let filepath = std::path::Path::new(&*input_path.trim());
-    let file_res = std::fs::File::open(filepath);
+fn read_all_filepaths_from_zip(input_path: &String) -> Result<Vec<SacredZipFile>, Box<dyn Error>> {
+    let filepath = std::path::PathBuf::from(&*input_path.trim());
+    let file_res = std::fs::File::open(filepath.clone());
     if file_res.is_err() {
         println!("{filepath:?}")
     }
     let file = file_res?;
+
+    let mut sacredFiles: Vec<SacredZipFile> = Vec::new();
     let mut archive = zip::ZipArchive::new(file).unwrap();
     for i in 0..archive.len() {
-        let mut file_object = archive.by_index(i).unwrap();
-        let output_path = match file_object.enclosed_name() {
+        let SacredZipFile { zipPath, zipInsidePath, endsWithSlash, name, comment }: SacredZipFile;
+
+        let mut archiveZipFile = archive.by_index(i).unwrap();
+        let archiveZipFilePath = match archiveZipFile.enclosed_name() {
             Some(path) => path.to_owned(),
             None => continue,
         };
-        {
-            let comment = file_object.comment();
-            if !comment.is_empty() {
-                println!("File {i} comment: {comment}")
-            }
-        }
-        if (*file_object.name()).ends_with('/') {
-            print!("File {} extracted to \" {}\"", i, output_path.display());
-            // fs::create_dir_all()
-        } else {
-            println!("File {} extracted to \"{}\" ({} bytes)", i, output_path.display(), file_object.size());
-            if let Some(p) = output_path.parent() {
-                if !p.exists() {
-                    // fs::create_dir_all(p).unwrap();
-                }
-            }
-            // let mut output_file_object = fs::File::create(&output_path).unwrap();
-            // std::io::copy(&mut file_object, &mut output_file_object);
-        }
+
+        zipPath = filepath.clone().into_os_string().into_string().unwrap();
+        zipInsidePath = archiveZipFilePath.into_os_string().into_string().unwrap();
+        endsWithSlash = (*archiveZipFile.name()).ends_with('/');
+        name = archiveZipFile.name().to_string();
+        comment = archiveZipFile.comment().to_string();
+
+        sacredFiles.push(SacredZipFile { zipPath, zipInsidePath, endsWithSlash, name, comment });
     }
-    Ok(())
+    return Ok(sacredFiles);
+}
+
+#[derive(Debug)]
+struct SacredZipFile {
+    zipPath: String,
+    zipInsidePath: String,
+    endsWithSlash: bool,
+    name: String,
+    comment: String,
 }
