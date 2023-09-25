@@ -3,8 +3,6 @@
 use zip;
 
 pub mod sacred {
-    use std::path::PathBuf;
-
     pub fn listAllInsidePaths(sacredFiles: Vec<SacredZipFile>) -> Vec<String>
     {
         return sacredFiles.iter().map(|x| { x.clone().zipInsidePath.clone() }).collect::<Vec<String>>();

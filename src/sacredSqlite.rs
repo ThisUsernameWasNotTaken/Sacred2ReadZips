@@ -1,6 +1,6 @@
 use sqlite;
 
-pub mod sacred
+pub mod sacredtt
 {
-
+    pub fn testificate() {}
 }

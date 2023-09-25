@@ -5,13 +5,13 @@
 /// dafür brauch ich noch die c++ grannyconverter tests ob man die so überlagern kann wie ich denke
 /// wenn ich durch bin kann ich den pfad zur sacred install dir versuchen autom. zu suchen
 
-mod sacredFolderFunctions;
+mod sacredFolder;
 
 use std::{fs, io};
 use std::error::Error;
 use std::io::stdin;
 use zip;
-use sacredFolderFunctions::sacred::*;
+use sacredFolder::sacred::*;
 
 fn main() {
     loop {
