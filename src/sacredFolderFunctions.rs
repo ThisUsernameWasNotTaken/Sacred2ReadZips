@@ -3,6 +3,8 @@
 use zip;
 
 pub mod sacred {
+    use std::path::PathBuf;
+
     pub fn listAllInsidePaths(sacredFiles: Vec<SacredZipFile>) -> Vec<String>
     {
         return sacredFiles.iter().map(|x| { x.clone().zipInsidePath.clone() }).collect::<Vec<String>>();
@@ -36,6 +38,12 @@ pub mod sacred {
             sacredFiles.push(SacredZipFile { zipPath, zipInsidePath, endsWithSlash, name, comment });
         }
         return Ok(sacredFiles);
+    }
+
+    pub fn listAllZipPaths(sacredFolderpathToZips: &String) -> Vec<String>
+    {
+        let allFilepaths: Vec<String> = std::fs::read_dir(sacredFolderpathToZips).unwrap().map(|x| x.unwrap().path().into_os_string().into_string().unwrap()).collect();
+        return allFilepaths;
     }
 
     #[derive(Debug)]
