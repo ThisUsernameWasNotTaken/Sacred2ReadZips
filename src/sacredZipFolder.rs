@@ -3,7 +3,7 @@
 use zip;
 
 pub mod sacred {
-    pub fn listAllInsidePaths(sacredFiles: Vec<SacredZipFile>) -> Vec<String>
+    pub fn listAllInsidePaths(sacredFiles: &Vec<SacredZipFile>) -> Vec<String>
     {
         return sacredFiles.iter().map(|x| { x.clone().zipInsidePath.clone() }).collect::<Vec<String>>();
     }
@@ -19,7 +19,7 @@ pub mod sacred {
         let mut sacredFiles: Vec<SacredZipFile> = Vec::new();
         let mut archive = zip::ZipArchive::new(file).unwrap();
         for i in 0..archive.len() {
-            let SacredZipFile { zipPath, zipInsidePath, endsWithSlash, name, comment }: SacredZipFile;
+            let SacredZipFile { zipPath, zipInsidePath, fileType, name, comment }: SacredZipFile;
 
             let mut archiveZipFile = archive.by_index(i).unwrap();
             let archiveZipFilePath = match archiveZipFile.enclosed_name() {
@@ -29,11 +29,16 @@ pub mod sacred {
 
             zipPath = filepath.clone().into_os_string().into_string().unwrap();
             zipInsidePath = archiveZipFilePath.into_os_string().into_string().unwrap();
-            endsWithSlash = (*archiveZipFile.name()).ends_with('/');
             name = archiveZipFile.name().to_string();
             comment = archiveZipFile.comment().to_string();
+            let endsWithSlash = (*archiveZipFile.name()).ends_with('/');
+            if endsWithSlash {
+                fileType = 1;
+            } else {
+                fileType = 0;
+            }
 
-            sacredFiles.push(SacredZipFile { zipPath, zipInsidePath, endsWithSlash, name, comment });
+            sacredFiles.push(SacredZipFile { zipPath, zipInsidePath, fileType, name, comment });
         }
         return Ok(sacredFiles);
     }
@@ -46,10 +51,17 @@ pub mod sacred {
 
     #[derive(Debug)]
     pub struct SacredZipFile {
-        zipPath: String,
-        zipInsidePath: String,
-        endsWithSlash: bool,
-        name: String,
-        comment: String,
+        pub zipPath: String,
+        pub zipInsidePath: String,
+        pub fileType: i64,
+        pub name: String,
+        pub comment: String,
+    }
+
+    impl SacredZipFile
+    {
+        pub fn endsWithSlash(&mut self) -> bool {
+            return self.fileType == 1;
+        }
     }
 }

@@ -1,0 +1,3 @@
+select zipInsidePath, COUNT(1) from entries
+group by zipInsidePath
+order by COUNT(1) DESC
