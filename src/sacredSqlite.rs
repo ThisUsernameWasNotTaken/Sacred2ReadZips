@@ -20,25 +20,15 @@ pub mod sacred
         con.execute(query).unwrap();
 
         let insertCommand = "INSERT INTO entries VALUES (:zipPath, :zipInsidePath, :endsWithSlash, :name, :comment)";
-        let mut insertStatement = con.prepare(insertCommand).unwrap().into_iter();
+        let mut insertStatement = con.prepare(insertCommand).unwrap();//.into_iter();
         for (i, entry) in entriesToInsert.iter().enumerate() {
-            con.("")
-            // .bind((":zipPath", sqliteTextPara(&entry.zipPath)))
-            // .bind((":zipInsidePath", sqliteTextPara(&entry.zipInsidePath)))
-            // //.bind((":fileType", entry.fileType))
-            // .bind((":name", sqliteTextPara(&entry.name)))
-            // .bind((":comment", sqliteTextPara(&entry.comment)));
-
+            insertStatement.reset().unwrap();
             insertStatement.bind((":zipPath", sqliteTextPara(&entry.zipPath))).unwrap();
             insertStatement.bind((":zipInsidePath", sqliteTextPara(&entry.zipInsidePath))).unwrap();
             // insertStatement.bind((":fileType", entry.fileType)).unwrap();
             insertStatement.bind((":name", sqliteTextPara(&entry.name))).unwrap();
             insertStatement.bind((":comment", sqliteTextPara(&entry.comment))).unwrap();
-            // let temp = con.execute(insertStatement);
-            // if temp.is_err() {
-            //     println!("{i}");
-            // }
-            insertStatement.map(|row| row.unwrap());
+            insertStatement.next();
         }
     }
 
