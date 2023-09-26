@@ -19,7 +19,7 @@ pub mod sacred {
         let mut sacredFiles: Vec<SacredZipFile> = Vec::new();
         let mut archive = zip::ZipArchive::new(file).unwrap();
         for i in 0..archive.len() {
-            let SacredZipFile { zipPath, zipInsidePath, fileType, name, comment }: SacredZipFile;
+            let SacredZipFile { zipPath, zipInsidePath, zipInsideFilename, fileType, name, comment }: SacredZipFile;
 
             let mut archiveZipFile = archive.by_index(i).unwrap();
             let archiveZipFilePath = match archiveZipFile.enclosed_name() {
@@ -29,6 +29,7 @@ pub mod sacred {
 
             zipPath = filepath.clone().into_os_string().into_string().unwrap();
             zipInsidePath = archiveZipFilePath.into_os_string().into_string().unwrap();
+            zipInsideFilename = archiveZipFilePath.file_name().unwrap().into_os_string().into_string().unwrap();
             name = archiveZipFile.name().to_string();
             comment = archiveZipFile.comment().to_string();
             let endsWithSlash = (*archiveZipFile.name()).ends_with('/');
@@ -38,7 +39,7 @@ pub mod sacred {
                 fileType = 0;
             }
 
-            sacredFiles.push(SacredZipFile { zipPath, zipInsidePath, fileType, name, comment });
+            sacredFiles.push(SacredZipFile { zipPath, zipInsidePath, zipInsideFilename, fileType, name, comment });
         }
         return Ok(sacredFiles);
     }
@@ -53,6 +54,7 @@ pub mod sacred {
     pub struct SacredZipFile {
         pub zipPath: String,
         pub zipInsidePath: String,
+        pub zipInsideFilename: String,
         pub fileType: i64,
         pub name: String,
         pub comment: String,

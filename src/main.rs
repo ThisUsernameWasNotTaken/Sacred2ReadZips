@@ -1,9 +1,13 @@
+// this program reads all zip files inside the "pak" folder of any sacred2 installation and puts them in a sqlite database file
 #![allow(non_snake_case)]
 
-/// read aaaaalll ze zippsss
-/// und then... try to extract the gr2 files.
+/// - [ ] und then... try to extract the gr2 files.
 /// dafür brauch ich noch die c++ grannyconverter tests ob man die so überlagern kann wie ich denke
-/// wenn ich durch bin kann ich den pfad zur sacred install dir versuchen autom. zu suchen
+// todo, extract same inside path files into a workspace folder
+// todo, link to c++ part of granny lib converter
+// todo, re-load entries from .sqlite
+// todo investigate, implement filename only field on the .sqlite table and detect possible mismatches between full inside path groups and filename groups
+/// - [ ] wenn ich durch bin kann ich den pfad zur sacred install dir versuchen autom. zu suchen
 
 mod sacredZipFolder;
 mod sacredSqlite;

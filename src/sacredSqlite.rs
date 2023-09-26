@@ -4,7 +4,6 @@ pub mod sacred
 {
     use crate::sacredZipFolder::sacred::SacredZipFile;
 
-
     pub fn LoadAllIntoNewDbFile(entriesToInsert: &Vec<SacredZipFile>) {
         /*
         pub struct SacredZipFile {
@@ -21,16 +20,17 @@ pub mod sacred
 
         let mut batch: Vec<String> = vec![];
         for (i, entry) in entriesToInsert.iter().enumerate() {
-            let insertCommand = format!("INSERT INTO entries (zipPath, zipInsidePath, fileType, name, comment) VALUES ({zipPath}, {zipInsidePath}, {fileType}, {name}, {comment});",
+            let insertCommand = format!("INSERT INTO entries (zipPath, zipInsidePath, zipInsideFilename, fileType, name, comment) VALUES ({zipPath}, {zipInsidePath}, {zipInsideFilename}, {fileType}, {name}, {comment});",
                                         zipPath = sqliteTextPara(&entry.zipPath),
                                         zipInsidePath = sqliteTextPara(&entry.zipInsidePath),
+                                        zipInsideFilename = sqliteTextPara(&entry.zipInsideFilename),
                                         fileType = entry.fileType,
                                         name = sqliteTextPara(&entry.name),
                                         comment = sqliteTextPara(&entry.comment)
             );
             batch.push(insertCommand);
         }
-        let fullCommand = format!("BEGIN TRANSACTION;{}COMMIT;", batch.join("\r\n"));
+        let fullCommand = format!("BEGIN TRANSACTION;\r\n{}\r\nCOMMIT;", batch.join("\r\n"));
         con.execute(fullCommand).unwrap();
     }
 
