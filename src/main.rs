@@ -7,6 +7,7 @@
 /// dafür brauch ich noch die c++ grannyconverter tests ob man die so überlagern kann wie ich denke
 // todo, re-load entries from .sqlite
 // todo investigate, use filename field on the .sqlite table and detect possible mismatches between full inside path groups and filename groups
+// todo investigate "E:\Programs\Steam\steamapps\common\Sacred 2 Gold\pak\graphics04.zip\lq\maps\gui\gui_quest_signs-subquests" has no ext but its clearly a .dds
 // todo, wenn ich durch bin kann ich den pfad zur sacred install dir versuchen autom. zu suchen
 
 mod sacredTools;
