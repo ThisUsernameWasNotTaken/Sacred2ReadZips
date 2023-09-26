@@ -14,6 +14,7 @@ pub mod sacred
             comment: String,
         }
         */
+        std::fs::remove_file("temporary.sqlite").unwrap();
         let con = sqlite::open("temporary.sqlite").unwrap();
         let query = "CREATE TABLE IF NOT EXISTS entries (zipPath TEXT, zipInsidePath TEXT, fileType INTEGER, name TEXT, comment TEXT)";
         con.execute(query).unwrap();

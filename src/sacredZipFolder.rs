@@ -28,8 +28,8 @@ pub mod sacred {
             };
 
             zipPath = filepath.clone().into_os_string().into_string().unwrap();
-            zipInsidePath = archiveZipFilePath.into_os_string().into_string().unwrap();
-            zipInsideFilename = archiveZipFilePath.file_name().unwrap().into_os_string().into_string().unwrap();
+            zipInsidePath = archiveZipFilePath.clone().into_os_string().into_string().unwrap();
+            zipInsideFilename = archiveZipFilePath.clone().file_name().unwrap().to_os_string().into_string().unwrap();
             name = archiveZipFile.name().to_string();
             comment = archiveZipFile.comment().to_string();
             let endsWithSlash = (*archiveZipFile.name()).ends_with('/');
