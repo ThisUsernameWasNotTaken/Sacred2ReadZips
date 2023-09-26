@@ -60,7 +60,7 @@ pub mod sacred {
 
     impl SacredZipFile
     {
-        pub fn endsWithSlash(&mut self) -> bool {
+        pub fn isDirectory(&mut self) -> bool {
             return self.fileType == 1;
         }
     }

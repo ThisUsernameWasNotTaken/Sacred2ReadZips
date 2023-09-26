@@ -19,20 +19,26 @@ pub mod sacred
         let query = "CREATE TABLE IF NOT EXISTS entries (zipPath TEXT, zipInsidePath TEXT, fileType INTEGER, name TEXT, comment TEXT)";
         con.execute(query).unwrap();
 
-        let insertCommand = "INSERT INTO entries VALUES (:zipPath, :zipInsidePath, :endsWithSlash, :name, :comment)";
-        let mut insertStatement = con.prepare(insertCommand).unwrap();//.into_iter();
+        let mut batch: Vec<String> = vec![];
         for (i, entry) in entriesToInsert.iter().enumerate() {
-            insertStatement.reset().unwrap();
-            insertStatement.bind((":zipPath", sqliteTextPara(&entry.zipPath))).unwrap();
-            insertStatement.bind((":zipInsidePath", sqliteTextPara(&entry.zipInsidePath))).unwrap();
-            // insertStatement.bind((":fileType", entry.fileType)).unwrap();
-            insertStatement.bind((":name", sqliteTextPara(&entry.name))).unwrap();
-            insertStatement.bind((":comment", sqliteTextPara(&entry.comment))).unwrap();
-            insertStatement.next();
+            let insertCommand = format!("INSERT INTO entries (zipPath, zipInsidePath, fileType, name, comment) VALUES ({zipPath}, {zipInsidePath}, {fileType}, {name}, {comment});",
+                                        zipPath = sqliteTextPara(&entry.zipPath),
+                                        zipInsidePath = sqliteTextPara(&entry.zipInsidePath),
+                                        fileType = entry.fileType,
+                                        name = sqliteTextPara(&entry.name),
+                                        comment = sqliteTextPara(&entry.comment)
+            );
+            batch.push(insertCommand);
         }
+        let fullCommand = format!("BEGIN TRANSACTION;{}COMMIT;", batch.join("\r\n"));
+        con.execute(fullCommand).unwrap();
     }
 
-    fn sqliteTextPara(text: &String) -> &[u8] {
-        return text.as_bytes();
+    fn sqliteTextPara(text: &String) -> String { //&[u8] {
+        let mut sqliteText = String::new();
+        sqliteText.push_str("\'");
+        sqliteText.push_str(text);
+        sqliteText.push_str("\'");
+        return sqliteText;
     }
 }
