@@ -2,21 +2,19 @@
 #![allow(non_snake_case)]
 
 /// try to extract the gr2 files.
-// todo, extract same inside path files into a workspace folder
+// todo, extract equivalent inside-path files into a workspace folder
 // todo, link to c++ part of granny lib converter
 /// dafür brauch ich noch die c++ grannyconverter tests ob man die so überlagern kann wie ich denke
 // todo, re-load entries from .sqlite
 // todo investigate, use filename field on the .sqlite table and detect possible mismatches between full inside path groups and filename groups
 // todo, wenn ich durch bin kann ich den pfad zur sacred install dir versuchen autom. zu suchen
 
-mod sacredZipFolder;
-mod sacredSqlite;
+mod sacredTools;
 
 use std::error::Error;
 use std::io::stdin;
 use zip;
-use sacredZipFolder::sacred::*;
-use sacredSqlite::sacred::*;
+use sacredTools::*;
 
 fn main() {
     loop {
@@ -27,13 +25,12 @@ fn main() {
         let mut allOfThem: Vec<SacredZipFile> = vec![];
         let allZipsInDirectory = listAllZipPaths(&userInputText);
         for zipFilePath in allZipsInDirectory {
-            let mut resReadZip = readZip(&zipFilePath).unwrap();
+            let mut resReadZip = readZip(&zipFilePath);
             allOfThem.append(&mut resReadZip);
         }
-        // let files = listAllInsidePaths(&allOfThem).join("\r\n");
-        // println!("{}", files);
 
         LoadAllIntoNewDbFile(&allOfThem);
+        // ExtractToWorkspace(&allOfThem, "");
     }
 }
 
@@ -51,4 +48,3 @@ fn getUserInput() -> String {
     }
     return userInputText.trim().to_string();
 }
-
