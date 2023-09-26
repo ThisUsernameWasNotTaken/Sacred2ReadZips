@@ -5,18 +5,9 @@ pub mod sacred
     use crate::sacredZipFolder::sacred::SacredZipFile;
 
     pub fn LoadAllIntoNewDbFile(entriesToInsert: &Vec<SacredZipFile>) {
-        /*
-        pub struct SacredZipFile {
-            zipPath: String,
-            zipInsidePath: String,
-            endsWithSlash: bool,
-            name: String,
-            comment: String,
-        }
-        */
         std::fs::remove_file("temporary.sqlite").unwrap();
         let con = sqlite::open("temporary.sqlite").unwrap();
-        let query = "CREATE TABLE IF NOT EXISTS entries (zipPath TEXT, zipInsidePath TEXT, fileType INTEGER, name TEXT, comment TEXT)";
+        let query = "CREATE TABLE IF NOT EXISTS entries (zipPath TEXT, zipInsidePath TEXT, zipInsideFilename TEXT, fileType INTEGER, name TEXT, comment TEXT)";
         con.execute(query).unwrap();
 
         let mut batch: Vec<String> = vec![];
