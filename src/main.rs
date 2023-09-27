@@ -30,8 +30,8 @@ fn main() {
             allOfThem.append(&mut resReadZip);
         }
 
-        LoadAllIntoNewDbFile(&allOfThem);
-        // ExtractToWorkspace(&allOfThem, "");
+        // LoadAllIntoNewDbFile(&allOfThem);
+        ExtractToWorkspaceByName(&allOfThem, "models/heroes/highelve/a_helve.GR2");
     }
 }
 
