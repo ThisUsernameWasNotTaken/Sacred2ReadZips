@@ -1,5 +1,6 @@
 // this program reads all zip files inside the "pak" folder of any sacred2 installation and puts them in a sqlite database file
 #![allow(non_snake_case)]
+#![allow(warnings)]
 
 /// try to extract the gr2 files.
 // todo, extract equivalent inside-path files into a workspace folder
@@ -14,6 +15,7 @@ mod sacredTools;
 
 use std::error::Error;
 use std::io::stdin;
+use std::path::PathBuf;
 use zip;
 use sacredTools::*;
 
@@ -31,7 +33,8 @@ fn main() {
         }
 
         // LoadAllIntoNewDbFile(&allOfThem);
-        ExtractToWorkspaceByName(&allOfThem, "models/heroes/highelve/a_helve.GR2");
+        let temp = QueryForPath(&allOfThem, String::from("models/heroes/highelve/a_helve.GR2"));
+        ExtractToWorkspace(&temp, PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test"));
     }
 }
 

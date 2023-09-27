@@ -1,7 +1,8 @@
 #![allow(non_snake_case)]
+#![allow(warnings)]
 
 use std::ffi::{OsStr, OsString};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 //// SQLITE
 pub fn LoadAllIntoNewDbFile(entriesToInsert: &Vec<SacredZipFile>) {
     let mut batch: Vec<String> = vec![];
@@ -97,13 +98,12 @@ fn MakeStringFromOs(osString: &Option<&OsStr>) -> String {
 }
 
 //// EXTRACT ZIP
-pub fn ExtractToWorkspaceByName(entries: &Vec<SacredZipFile>, filename: &str) {
-    // query for entries:
-    let extractUs: Vec<&SacredZipFile> = entries.iter().filter(|x| x.path == filename).collect();
-
-    // last, iterate over all:
+pub fn QueryForPath(entries: &Vec<SacredZipFile>, path: String) -> Vec<&SacredZipFile> {
+    return entries.iter().filter(|x| x.path == path).collect();
+}
+pub fn ExtractToWorkspace(extractUs: &Vec<&SacredZipFile>, extractDir: PathBuf) {
     // note, we dont expect duplicate / two equal zip paths because a path inside a zip should be unique.
-    for extractItem in &extractUs {
+    for extractItem in extractUs {
         let filepath = std::path::Path::new(&extractItem.zipPath);
         let fileStream = std::fs::File::open(filepath).unwrap();
         let mut archive = zip::ZipArchive::new(fileStream).unwrap();
@@ -117,9 +117,12 @@ pub fn ExtractToWorkspaceByName(entries: &Vec<SacredZipFile>, filename: &str) {
             /////// COMPARE PATHS HERE
             let temp = MakeString(&archiveZipFilePath);
             if temp == extractItem.path {
-                println!("Found some!")
                 // fs::create_dir_all()
-                // let mut output_file_object = fs::File::create(&output_path).unwrap();
+                let mut writepath: PathBuf = PathBuf::from("sacred extract test/"); // std::env::current_dir().unwrap();
+                let zipPath = PathBuf::from(&extractItem.zipPath);
+                writepath.push(MakeStringFromOs(&Path::file_name(&zipPath)));
+                // writepath.push();
+                let mut output_file_object = std::fs::File::create(writepath).unwrap();
                 // std::io::copy(&mut file_object, &mut output_file_object);
             }
         }
