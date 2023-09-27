@@ -3,6 +3,7 @@
 
 use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
+
 //// SQLITE
 pub fn LoadAllIntoNewDbFile(entriesToInsert: &Vec<SacredZipFile>) {
     let mut batch: Vec<String> = vec![];
@@ -118,12 +119,13 @@ pub fn ExtractToWorkspace(extractUs: &Vec<&SacredZipFile>, extractDir: PathBuf) 
             let temp = MakeString(&archiveZipFilePath);
             if temp == extractItem.path {
                 // fs::create_dir_all()
-                let mut writepath: PathBuf = PathBuf::from("sacred extract test/"); // std::env::current_dir().unwrap();
+                let mut writepath = String::from("sacred extract test/"); // std::env::current_dir().unwrap();
                 let zipPath = PathBuf::from(&extractItem.zipPath);
-                writepath.push(MakeStringFromOs(&Path::file_name(&zipPath)));
-                // writepath.push();
-                let mut output_file_object = std::fs::File::create(writepath).unwrap();
-                // std::io::copy(&mut file_object, &mut output_file_object);
+                let filePath = PathBuf::from(&extractItem.path);
+                writepath.push_str(&MakeStringFromOs(&Path::file_name(&zipPath)));
+                writepath.push_str(&MakeStringFromOs(&Path::file_name(&filePath)));
+                let mut output_file_object = std::fs::File::create(PathBuf::from(writepath)).unwrap();
+                std::io::copy(&mut archiveZipFile, &mut output_file_object);
             }
         }
     }
