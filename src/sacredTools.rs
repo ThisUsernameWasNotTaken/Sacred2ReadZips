@@ -101,17 +101,10 @@ pub fn ExtractToWorkspaceByName(entries: &Vec<SacredZipFile>, filename: &str) {
     // query for entries:
     let extractUs: Vec<&SacredZipFile> = entries.iter().filter(|x| x.path == filename).collect();
 
-    // get all touching zip files:
-    let mut allZipsToOpen: Vec<String> = vec![];
-    for x in extractUs.iter().map(|x| x.zipPath.clone()) {
-        if !allZipsToOpen.contains(&x) {
-            allZipsToOpen.push(x);
-        }
-    }
-
     // last, iterate over all:
-    for zipPath in allZipsToOpen {
-        let filepath = std::path::Path::new(&zipPath);
+    // note, we dont expect duplicate / two equal zip paths because a path inside a zip should be unique.
+    for extractItem in &extractUs {
+        let filepath = std::path::Path::new(&extractItem.zipPath);
         let fileStream = std::fs::File::open(filepath).unwrap();
         let mut archive = zip::ZipArchive::new(fileStream).unwrap();
         for i in 0..archive.len() {
@@ -121,14 +114,13 @@ pub fn ExtractToWorkspaceByName(entries: &Vec<SacredZipFile>, filename: &str) {
                 None => continue,
             };
 
+            /////// COMPARE PATHS HERE
             let temp = MakeString(&archiveZipFilePath);
-            for extractItem in &extractUs {
-                if temp == extractItem.path {
-                    println!("Found some!")
-                    // fs::create_dir_all()
-                    // let mut output_file_object = fs::File::create(&output_path).unwrap();
-                    // std::io::copy(&mut file_object, &mut output_file_object);
-                }
+            if temp == extractItem.path {
+                println!("Found some!")
+                // fs::create_dir_all()
+                // let mut output_file_object = fs::File::create(&output_path).unwrap();
+                // std::io::copy(&mut file_object, &mut output_file_object);
             }
         }
     }
