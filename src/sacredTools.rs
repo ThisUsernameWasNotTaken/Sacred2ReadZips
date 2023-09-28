@@ -100,12 +100,21 @@ fn MakeStringFromOs(osString: &Option<&OsStr>) -> String {
 
 //// EXTRACT ZIP
 pub fn QueryForPath(entries: &Vec<SacredZipFile>, path: String) -> Vec<&SacredZipFile> {
-    return entries.iter().filter(|x| x.path == path).collect();
+    return entries.iter().filter(|x| x.path.starts_with(&path)).collect();
 }
 pub fn ExtractToWorkspace(extractUs: &Vec<&SacredZipFile>, extractDir: PathBuf) {
+
     // note, we dont expect duplicate / two equal zip paths because a path inside a zip should be unique.
-    for extractItem in extractUs {
-        let filepath = std::path::Path::new(&extractItem.zipPath);
+    // get all touching zip files:
+    let mut allZipsToOpen: Vec<String> = vec![];
+    for x in extractUs.iter().map(|x| x.zipPath.clone()) {
+        if !allZipsToOpen.contains(&x) {
+            allZipsToOpen.push(x);
+        }
+    }
+
+    for zipPath in allZipsToOpen {
+        let filepath = std::path::Path::new(&zipPath);
         let fileStream = std::fs::File::open(filepath).unwrap();
         let mut archive = zip::ZipArchive::new(fileStream).unwrap();
         for i in 0..archive.len() {
@@ -115,17 +124,19 @@ pub fn ExtractToWorkspace(extractUs: &Vec<&SacredZipFile>, extractDir: PathBuf) 
                 None => continue,
             };
 
-            /////// COMPARE PATHS HERE
             let temp = MakeString(&archiveZipFilePath);
-            if temp == extractItem.path {
-                // fs::create_dir_all()
-                let mut writepath = String::from("sacred extract test/"); // std::env::current_dir().unwrap();
-                let zipPath = PathBuf::from(&extractItem.zipPath);
-                let filePath = PathBuf::from(&extractItem.path);
-                writepath.push_str(&MakeStringFromOs(&Path::file_name(&zipPath)));
-                writepath.push_str(&MakeStringFromOs(&Path::file_name(&filePath)));
-                let mut output_file_object = std::fs::File::create(PathBuf::from(writepath)).unwrap();
-                std::io::copy(&mut archiveZipFile, &mut output_file_object);
+            for extractItem in extractUs {
+                /////// COMPARE PATHS HERE
+                if temp == extractItem.path {
+                    // fs::create_dir_all()
+                    let mut writepath = String::from("sacred extract test/"); // std::env::current_dir().unwrap();
+                    let zipPath = PathBuf::from(&extractItem.zipPath);
+                    let filePath = PathBuf::from(&extractItem.path);
+                    writepath.push_str(&MakeStringFromOs(&Path::file_name(&zipPath)));
+                    writepath.push_str(&MakeStringFromOs(&Path::file_name(&filePath)));
+                    let mut output_file_object = std::fs::File::create(PathBuf::from(writepath)).unwrap();
+                    std::io::copy(&mut archiveZipFile, &mut output_file_object);
+                }
             }
         }
     }

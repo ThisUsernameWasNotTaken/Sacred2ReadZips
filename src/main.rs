@@ -10,6 +10,7 @@
 // todo investigate, use filename field on the .sqlite table and detect possible mismatches between full inside path groups and filename groups
 // todo investigate "E:\Programs\Steam\steamapps\common\Sacred 2 Gold\pak\graphics04.zip\lq\maps\gui\gui_quest_signs-subquests" has no ext but its clearly a .dds
 // todo, wenn ich durch bin kann ich den pfad zur sacred install dir versuchen autom. zu suchen
+// todo, add file size info to sqlite db
 
 mod sacredTools;
 
@@ -33,7 +34,7 @@ fn main() {
         }
 
         // LoadAllIntoNewDbFile(&allOfThem);
-        let temp = QueryForPath(&allOfThem, String::from("models/heroes/highelve/a_helve.GR2"));
+        let temp = QueryForPath(&allOfThem, String::from("models/heroes/highelve/"));
         ExtractToWorkspace(&temp, PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test"));
     }
 }
