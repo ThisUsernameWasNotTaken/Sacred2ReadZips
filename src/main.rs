@@ -13,6 +13,7 @@
 // todo, add file size info to sqlite db
 
 mod sacredTools;
+mod building_bridges;
 
 use std::error::Error;
 use std::io::stdin;
@@ -33,9 +34,9 @@ fn main() {
             allOfThem.append(&mut resReadZip);
         }
 
-        // LoadAllIntoNewDbFile(&allOfThem);
-        let temp = QueryForPath(&allOfThem, String::from("models/heroes/highelve/"));
-        ExtractToWorkspace(&temp, PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test"));
+        LoadAllIntoNewDbFile(&allOfThem);
+        // let temp = QueryForPath(&allOfThem, String::from("models/npc/highelves/inquisitor-w-soldier/v_inq-w-soldier_idlea_zw.GR2"));
+        // ExtractTo(&temp, PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test"));
     }
 }
 

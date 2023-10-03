@@ -102,7 +102,7 @@ fn MakeStringFromOs(osString: &Option<&OsStr>) -> String {
 pub fn QueryForPath(entries: &Vec<SacredZipFile>, path: String) -> Vec<&SacredZipFile> {
     return entries.iter().filter(|x| x.path.starts_with(&path)).collect();
 }
-pub fn ExtractToWorkspace(extractUs: &Vec<&SacredZipFile>, extractDir: PathBuf) {
+pub fn ExtractTo(extractUs: &Vec<&SacredZipFile>, extractDir: PathBuf) {
 
     // note, we dont expect duplicate / two equal zip paths because a path inside a zip should be unique.
     // get all touching zip files:
