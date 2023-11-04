@@ -6,14 +6,13 @@
 // todo, extract equivalent inside-path files into a workspace folder
 // todo, link to c++ part of granny lib converter
 /// dafür brauch ich noch die c++ grannyconverter tests ob man die so überlagern kann wie ich denke
-// todo, re-load entries from .sqlite
+// todo, implement re-load entries from .sqlite
 // todo investigate, use filename field on the .sqlite table and detect possible mismatches between full inside path groups and filename groups
 // todo investigate "E:\Programs\Steam\steamapps\common\Sacred 2 Gold\pak\graphics04.zip\lq\maps\gui\gui_quest_signs-subquests" has no ext but its clearly a .dds
 // todo, wenn ich durch bin kann ich den pfad zur sacred install dir versuchen autom. zu suchen
 // todo, add file size info to sqlite db
 
 mod sacredTools;
-mod building_bridges;
 
 use std::error::Error;
 use std::io::stdin;
@@ -27,18 +26,23 @@ fn main() {
         let userInputText = getUserInput();
 
         // get list of actual zip files. then read all and index them
-        let mut allOfThem: Vec<SacredZipFile> = vec![];
+        let mut allOfThem: Vec<&mut SacredZipFile> = vec![];
         let allZipsInDirectory = listAllZipPaths(&userInputText);
         for zipFilePath in allZipsInDirectory {
             let mut resReadZip = readZip(&zipFilePath);
             allOfThem.append(&mut resReadZip);
         }
 
-        LoadAllIntoNewDbFile(&allOfThem);
-        // let temp = QueryForPath(&allOfThem, String::from("models/npc/highelves/inquisitor-w-soldier/v_inq-w-soldier_idlea_zw.GR2"));
-        // ExtractTo(&temp, PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test"));
+
+        // LoadAllIntoNewDbFile(&allOfThem);
+        let mut temp = QueryForPath(&allOfThem, String::from("models/npc/highelves/inquisitor-w-soldier/v_inq-w-soldier_idlea_zw.GR2"));
+        // ExtractTo(&mut temp, PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test"));
     }
 }
+
+// extern "C" {
+//     fn extractFbx(baseFilepath: &cty::c_char, list: &Vec<String>) -> usize;
+// }
 
 fn getUserInput() -> String {
     let defaultFolderPath = String::from("E:\\Programs\\Steam\\steamapps\\common\\Sacred 2 Gold\\pak");
