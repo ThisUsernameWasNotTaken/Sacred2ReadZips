@@ -26,7 +26,7 @@ fn main() {
         let userInputText = getUserInput();
 
         // get list of actual zip files. then read all and index them
-        let mut allOfThem: Vec<&mut SacredZipFile> = vec![];
+        let mut allOfThem: Vec<SacredZipFile> = vec![];
         let allZipsInDirectory = listAllZipPaths(&userInputText);
         for zipFilePath in allZipsInDirectory {
             let mut resReadZip = readZip(&zipFilePath);
@@ -35,7 +35,8 @@ fn main() {
 
 
         // LoadAllIntoNewDbFile(&allOfThem);
-        let mut temp = QueryForPath(&allOfThem, String::from("models/npc/highelves/inquisitor-w-soldier/v_inq-w-soldier_idlea_zw.GR2"));
+        let queryString = String::from("models/npc/highelves/inquisitor-w-soldier/v_inq-w-soldier_idlea_zw.GR2");
+        let mut temp = QueryForPath(&allOfThem, &*queryString);
         // ExtractTo(&mut temp, PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test"));
     }
 }

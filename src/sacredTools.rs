@@ -45,7 +45,7 @@ pub fn listAllZipPaths(sacredFolderpathToZips: &String) -> Vec<String>
     let allFilepaths: Vec<String> = std::fs::read_dir(sacredFolderpathToZips).unwrap().map(|x| x.unwrap().path().into_os_string().into_string().unwrap()).collect();
     return allFilepaths;
 }
-pub fn readZip(filepathSacredZip: &String) -> Vec<&mut SacredZipFile> {
+pub fn readZip(filepathSacredZip: &String) -> Vec<SacredZipFile> {
     let filepath = std::path::PathBuf::from(&*filepathSacredZip.trim());
     let file_res = std::fs::File::open(filepath.clone());
     if file_res.is_err() {
@@ -53,7 +53,7 @@ pub fn readZip(filepathSacredZip: &String) -> Vec<&mut SacredZipFile> {
     }
     let file = file_res.unwrap();
 
-    let mut sacredFiles: Vec<&mut SacredZipFile> = Vec::new();
+    let mut sacredFiles: Vec<SacredZipFile> = Vec::new();
     let mut archive = zip::ZipArchive::new(file).unwrap();
     for i in 0..archive.len() {
         let SacredZipFile { zipPath, path, filename, fileExtension, zipType, name, comment, fileExtensionNotAvailable, .. }: SacredZipFile;
@@ -87,7 +87,7 @@ pub fn readZip(filepathSacredZip: &String) -> Vec<&mut SacredZipFile> {
             }
         }
 
-        sacredFiles.push(&mut SacredZipFile { zipPath, path, filename, fileExtension, zipType, name, comment, fileExtensionNotAvailable, meta_temporaryExtractFilepath: Option::None });
+        sacredFiles.push(SacredZipFile { zipPath, path, filename, fileExtension, zipType, name, comment, fileExtensionNotAvailable, meta_temporaryExtractFilepath: Option::None });
     }
     return sacredFiles;
 }
@@ -99,8 +99,17 @@ fn MakeStringFromOs(osString: &Option<&OsStr>) -> String {
 }
 
 //// EXTRACT ZIP
-pub fn QueryForPath<'a>(entries: &Vec<&'a mut SacredZipFile>, path: String) -> Vec<&'a mut SacredZipFile> {
-    return entries.iter().filter(|x| x.path.starts_with(&path)).collect();
+pub fn QueryForPath<'a>(entries: &'a Vec<SacredZipFile>, path: &str) -> Vec<&'a SacredZipFile> {
+    entries
+        .iter()
+        .filter_map(|x| {
+            if x.path.starts_with(path) {
+                Some(x)
+            } else {
+                None
+            }
+        })
+        .collect()
 }
 pub fn ExtractTo(extractUs: &mut Vec<SacredZipFile>, extractDir: PathBuf) {
 
@@ -125,7 +134,9 @@ pub fn ExtractTo(extractUs: &mut Vec<SacredZipFile>, extractDir: PathBuf) {
             };
 
             let temp = MakeString(&archiveZipFilePath);
-            for extractItem in extractUs {
+
+            // extract and ALSO update the last extraction path in the entry
+            for extractItem in extractUs.iter_mut() {
                 /////// COMPARE PATHS HERE
                 if temp == extractItem.path {
                     // fs::create_dir_all()
