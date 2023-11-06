@@ -33,11 +33,12 @@ fn main() {
             allOfThem.append(&mut resReadZip);
         }
 
-
         // LoadAllIntoNewDbFile(&allOfThem);
         let queryString = String::from("models/npc/highelves/inquisitor-w-soldier/v_inq-w-soldier_idlea_zw.GR2");
-        let mut temp = QueryForPath(&allOfThem, &*queryString);
-        // ExtractTo(&mut temp, PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test"));
+        let mut temp = QueryForPath(&mut allOfThem, &*queryString);
+        let extractPath = PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test");
+        ExtractTo(&mut temp, extractPath);
+
     }
 }
 

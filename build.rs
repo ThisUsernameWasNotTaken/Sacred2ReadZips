@@ -39,7 +39,7 @@ fn main() {
 \\src\\gcl\\utilities\\fbxsdkcommon.cpp";
 
     let mut build = cc::Build::new();
-    let source_folder = "E:\\root\\Dateien\\Sacred\\GrannyConverterLibrary";
+    let source_folder = "GrannyConverterLibrary";// use a relative path  // "E:\\root\\Dateien\\Sacred\\GrannyConverterLibrary";
     for line in source_files.lines() {
         build.file(source_folder.to_owned() + line);
     }
