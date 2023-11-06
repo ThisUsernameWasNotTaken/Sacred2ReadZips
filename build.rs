@@ -1,5 +1,5 @@
 fn main() {
-    let sourceFiles =
+    let source_files =
         "\\src\\gcl\\bindings\\bonebinding.cpp
 \\src\\gcl\\bindings\\animation.cpp
 \\src\\gcl\\bindings\\abstractcurvekey.cpp
@@ -39,16 +39,16 @@ fn main() {
 \\src\\gcl\\utilities\\fbxsdkcommon.cpp";
 
     let mut build = cc::Build::new();
-    let sourceFolder = "E:\\root\\Dateien\\Sacred\\GrannyConverterLibrary";
-    for line in sourceFiles.lines() {
-        build.file(sourceFolder.to_owned() + line);
+    let source_folder = "E:\\root\\Dateien\\Sacred\\GrannyConverterLibrary";
+    for line in source_files.lines() {
+        build.file(source_folder.to_owned() + line);
     }
     build
         .include("E:\\root\\Dateien\\Sacred\\GrannyConverterLibrary\\external\\devilsdk\\include")
         .include("C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2020.3.1\\include")
-        .include(sourceFolder.to_owned() + "\\out\\build\\x86-Debug")
-        .include(sourceFolder.to_owned() + "\\src")
-        .include(sourceFolder)
+        .include(source_folder.to_owned() + "\\out\\build\\x86-Debug")
+        .include(source_folder.to_owned() + "\\src")
+        .include(source_folder)
         .std("c++17")
         .compile("granny2converter");
 
