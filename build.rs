@@ -38,7 +38,16 @@ fn main() {
 \\src\\gcl\\importer\\grannyimporterskeleton.cpp
 \\src\\gcl\\utilities\\fbxsdkcommon.cpp";
 
-    let mut build = cc::Build::new();
+    println!("cargo:rerun-if-changed=src/main.rs");
+    println!("cargo:rerun-if-changed=src/demo.cc");
+    println!("cargo:rerun-if-changed=include/demo.h");
+
+    let mut build = //cc::Build::new();
+        cxx_build::bridge("src/main.rs");
+    // .file("src/demo.cc")
+    // .flag_if_supported("-std=c++11")
+    // .compile("cxxbridge-demo");
+
     let source_folder = "GrannyConverterLibrary";// use a relative path  // "E:\\root\\Dateien\\Sacred\\GrannyConverterLibrary";
     for line in source_files.lines() {
         build.file(source_folder.to_owned() + line);
@@ -54,6 +63,7 @@ fn main() {
         .include(source_folder.to_owned() + "\\src")
         .include(source_folder)
         .std("c++17")
+        .flag_if_supported("-std=c++17")
         .compile("granny2converter");
 
     println!("cargo:rerun-if-changed=src/main");

@@ -38,16 +38,19 @@ fn main() {
         let mut temp = QueryForPath(&mut allOfThem, &*queryString);
         let extractPath = PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test");
         ExtractTo(&mut temp, extractPath.clone());
-        let list = temp.iter().map(|x| x.meta_temporaryExtractFilepath.clone().expect("previous code ensures this is set").into_os_string().into_string().unwrap()).collect();
-        let result = ffi::extractFbx(&extractPath.into_os_string().into_string().unwrap(), list);
+        let list: Vec<_> = temp.iter().map(|x| x.meta_temporaryExtractFilepath.clone().expect("previous code ensures this is set").into_os_string().into_string().unwrap()).collect();
+        // let result = ffi::extractFbx(&extractPath.into_os_string().into_string().unwrap(), list);
+        let outp = ffi::test("aaaa");
+        print!("{}", outp);
     }
 }
 
 #[cxx::bridge]
 mod ffi {
     unsafe extern "C++" {
-        // include!("main.h");
-        fn extractFbx(baseFilepath: &str, list: Vec<String>) -> usize;
+        include!("main.h");
+        // fn extractFbx(baseFilepath: &str, list: Vec<String>) -> usize;
+        fn test(x: str) -> str;
     }
 }
 // extern "C" {
