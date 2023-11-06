@@ -37,11 +37,19 @@ fn main() {
         let queryString = String::from("models/npc/highelves/inquisitor-w-soldier/v_inq-w-soldier_idlea_zw.GR2");
         let mut temp = QueryForPath(&mut allOfThem, &*queryString);
         let extractPath = PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test");
-        ExtractTo(&mut temp, extractPath);
-
+        ExtractTo(&mut temp, extractPath.clone());
+        let list = temp.iter().map(|x| x.meta_temporaryExtractFilepath.clone().expect("previous code ensures this is set").into_os_string().into_string().unwrap()).collect();
+        let result = ffi::extractFbx(&extractPath.into_os_string().into_string().unwrap(), list);
     }
 }
 
+#[cxx::bridge]
+mod ffi {
+    unsafe extern "C++" {
+        // include!("main.h");
+        fn extractFbx(baseFilepath: &str, list: Vec<String>) -> usize;
+    }
+}
 // extern "C" {
 //     fn extractFbx(baseFilepath: &cty::c_char, list: &Vec<String>) -> usize;
 // }

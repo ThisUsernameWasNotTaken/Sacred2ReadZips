@@ -43,6 +43,10 @@ fn main() {
     for line in source_files.lines() {
         build.file(source_folder.to_owned() + line);
     }
+
+    build.
+        file("src/main.cpp");
+
     build
         .include("E:\\root\\Dateien\\Sacred\\GrannyConverterLibrary\\external\\devilsdk\\include")
         .include("C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2020.3.1\\include")
