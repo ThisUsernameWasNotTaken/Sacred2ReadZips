@@ -17,6 +17,7 @@ mod sacredTools;
 use std::error::Error;
 use std::io::stdin;
 use std::path::PathBuf;
+use libc::c_int;
 use zip;
 use sacredTools::*;
 
@@ -39,19 +40,20 @@ fn main() {
         let extractPath = PathBuf::from("C:\\Users\\ruben\\Desktop\\sacred extract test");
         ExtractTo(&mut temp, extractPath.clone());
         let list: Vec<_> = temp.iter().map(|x| x.meta_temporaryExtractFilepath.clone().expect("previous code ensures this is set").into_os_string().into_string().unwrap()).collect();
-        // let result = ffi::extractFbx(&extractPath.into_os_string().into_string().unwrap(), list);
-        let outp = ffi::test("aaaa");
-        print!("{}", outp);
+        unsafe {
+            test();
+            // let result = extractFbx(&extractPath.into_os_string().into_string().unwrap(), list);
+            // let outp = test(c_int::from(2));
+            // print!("{}", outp);
+        }
     }
 }
 
-#[cxx::bridge]
-mod ffi {
-    unsafe extern "C++" {
-        include!("main.h");
-        // fn extractFbx(baseFilepath: &str, list: Vec<String>) -> usize;
-        fn test(x: str) -> str;
-    }
+#[link(name = "granny2converter")]
+extern "C" {
+    fn test();
+    // fn extractFbx(baseFilepath: &str, list: Vec<String>) -> usize;
+    // fn test(x: i32) -> i32;
 }
 // extern "C" {
 //     fn extractFbx(baseFilepath: &cty::c_char, list: &Vec<String>) -> usize;
